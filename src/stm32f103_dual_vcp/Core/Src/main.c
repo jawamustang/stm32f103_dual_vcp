@@ -60,6 +60,9 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
+void USB_CDC_RxHandler_0(uint8_t*, uint32_t);
+void USB_CDC_RxHandler_2(uint8_t*, uint32_t);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -139,15 +142,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  for (i = 0; i < 2; i++)
-	  {
-		  while (CDC_Transmit_FS("USB\r\n", 5, 2 * i) == USBD_BUSY)
-	      {
-	      /* Until data out. */
-	      }
+
+		//  while (CDC_Transmit_FS("USB0_N\r\n", 8, 0) == USBD_BUSY){};
+		  HAL_Delay(1000);
+		//  while (CDC_Transmit_FS("USB2_N\r\n", 8, 2) == USBD_BUSY){};
 		  HAL_Delay(1000);
 
-	  }
   }
   /* USER CODE END 3 */
 }
@@ -218,6 +218,18 @@ void _Error_Handler(char *file, int line)
   }
   /* USER CODE END Error_Handler_Debug */
 }
+
+void USB_CDC_RxHandler_0(uint8_t* Buf, uint32_t Len)
+{
+	while (CDC_Transmit_FS("Echo0\r\n", 7, 0) == USBD_BUSY){};
+
+}
+void USB_CDC_RxHandler_2(uint8_t* Buf, uint32_t Len)
+{
+	while (CDC_Transmit_FS("Echo2\r\n", 7, 2) == USBD_BUSY){};
+
+}
+
 /* USER CODE END 4 */
 
 /**

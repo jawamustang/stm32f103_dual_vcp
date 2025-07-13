@@ -331,6 +331,18 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len, uint16_t index)
   /* USER CODE BEGIN 6 */
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS, index);
+
+
+	switch (index) {
+	  case 0:
+		USB_CDC_RxHandler_0(UserRxBufferFS, *Len);
+		break;
+	  case 2:
+		USB_CDC_RxHandler_2(UserRxBufferFS, *Len);
+		break;
+	}
+	memset(UserRxBufferFS, '\0', *Len);
+
 #if defined(LOOPBACK_TEST)
   CDC_Transmit_FS(Buf, *Len, index);
 #else
