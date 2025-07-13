@@ -180,12 +180,12 @@ void _Error_Handler(char *file, int line)
 
 void USB_CDC_RxHandler_0(uint8_t* Buf, uint32_t Len)
 {
-	while (CDC_Transmit_FS("Echo0\r\n", 7, 0) == USBD_BUSY){};
+	while (CDC_Transmit_FS(Buf, Len, 0) == USBD_BUSY){};
 
 }
 void USB_CDC_RxHandler_2(uint8_t* Buf, uint32_t Len)
 {
-	while (CDC_Transmit_FS("Echo2\r\n", 7, 2) == USBD_BUSY){};
+	while (CDC_Transmit_FS(Buf, Len, 2) == USBD_BUSY){};
 
 }
 
