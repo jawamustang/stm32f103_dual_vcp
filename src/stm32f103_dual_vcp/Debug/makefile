@@ -56,6 +56,12 @@ default.size.stdout \
 OBJDUMP_LIST += \
 stm32f103_dual_vcp.list \
 
+OBJCOPY_HEX += \
+stm32f103_dual_vcp.hex \
+
+OBJCOPY_BIN += \
+stm32f103_dual_vcp.bin \
+
 
 # All Target
 all: main-build
@@ -64,8 +70,8 @@ all: main-build
 main-build: stm32f103_dual_vcp.elf secondary-outputs
 
 # Tool invocations
-stm32f103_dual_vcp.elf stm32f103_dual_vcp.map: $(OBJS) $(USER_OBJS) C:\Users\Lenovo\STM32CubeIDE\workspace_1.18.0\stm32f103_dual_vcp\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "stm32f103_dual_vcp.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Lenovo\STM32CubeIDE\workspace_1.18.0\stm32f103_dual_vcp\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f103_dual_vcp.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+stm32f103_dual_vcp.elf stm32f103_dual_vcp.map: $(OBJS) $(USER_OBJS) C:\Users\Lenovo\Documents\Projekty\stm32f103_dual_vcp\src\stm32f103_dual_vcp\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "stm32f103_dual_vcp.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Lenovo\Documents\Projekty\stm32f103_dual_vcp\src\stm32f103_dual_vcp\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f103_dual_vcp.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -79,12 +85,22 @@ stm32f103_dual_vcp.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DE
 	@echo 'Finished building: $@'
 	@echo ' '
 
+stm32f103_dual_vcp.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "stm32f103_dual_vcp.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+stm32f103_dual_vcp.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "stm32f103_dual_vcp.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) default.size.stdout stm32f103_dual_vcp.elf stm32f103_dual_vcp.list stm32f103_dual_vcp.map
+	-$(RM) default.size.stdout stm32f103_dual_vcp.bin stm32f103_dual_vcp.elf stm32f103_dual_vcp.hex stm32f103_dual_vcp.list stm32f103_dual_vcp.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
