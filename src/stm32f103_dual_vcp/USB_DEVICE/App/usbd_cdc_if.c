@@ -52,7 +52,6 @@
 
 /* USER CODE BEGIN INCLUDE */
 #include "main.h"
-#include "SEGGER_RTT.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -287,8 +286,6 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length, uint16
       HAL_UART_DMAStop(uart_ctx->huart);
       HAL_UART_Receive_DMA(uart_ctx->huart, (uint8_t *)uart_ctx->buf.data[0], DBL_BUF_TOTAL_LEN);
 
-      SEGGER_RTT_printf(0, "LINE_CODING: UART=%s, bitrate=%d, format=%d, parity=%d, datatype=%d\n",
-        uart_ctx->name, line_coding->bitrate, line_coding->format, line_coding->paritytype, line_coding->datatype);
     }
     break;
 

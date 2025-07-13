@@ -54,7 +54,6 @@
 #include <string.h>
 #include "stm32f1xx_hal_uart.h"
 #include "usbd_cdc_if.h"
-#include "SEGGER_RTT.h"
 #include "main.h"
 /* USER CODE END 0 */
 

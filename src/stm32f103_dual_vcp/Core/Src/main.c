@@ -27,7 +27,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usbd_cdc_if.h"
-#include "SEGGER_RTT.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -213,7 +212,7 @@ void _Error_Handler(char *file, int line)
   /* User can add his own implementation to report the HAL error return state */
   while(1)
   {
-    SEGGER_RTT_printf(0, "_Error_Handler: %s #%d\n", file, line);
+    printf("_Error_Handler: %s #%d\n", file, line);
     HAL_Delay(1000);
   }
   /* USER CODE END Error_Handler_Debug */
