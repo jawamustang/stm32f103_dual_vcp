@@ -52,19 +52,12 @@
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 #include <string.h>
-#include "stm32f1xx_hal_uart.h"
 #include "usbd_cdc_if.h"
 #include "main.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_FS;
-extern DMA_HandleTypeDef hdma_usart1_rx;
-extern DMA_HandleTypeDef hdma_usart1_tx;
-extern DMA_HandleTypeDef hdma_usart2_rx;
-extern DMA_HandleTypeDef hdma_usart2_tx;
-extern UART_HandleTypeDef huart1;
-extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -208,62 +201,6 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles DMA1 channel4 global interrupt.
-  */
-void DMA1_Channel4_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel4_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart1_tx);
-  /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel4_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA1 channel5 global interrupt.
-  */
-void DMA1_Channel5_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel5_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel5_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart1_rx);
-  /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel5_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA1 channel6 global interrupt.
-  */
-void DMA1_Channel6_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel6_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel6_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart2_rx);
-  /* USER CODE BEGIN DMA1_Channel6_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel6_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA1 channel7 global interrupt.
-  */
-void DMA1_Channel7_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel7_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel7_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart2_tx);
-  /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel7_IRQn 1 */
-}
-
-/**
   * @brief This function handles USB low priority or CAN RX0 interrupts.
   */
 void USB_LP_CAN1_RX0_IRQHandler(void)
@@ -275,95 +212,6 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
 
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USART1 global interrupt.
-  */
-void USART1_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART1_IRQn 0 */
-
-  /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
-  /* USER CODE BEGIN USART1_IRQn 1 */
-  if(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
-    uart_ctx_t * const uart_ctx = &ctx.uart1;
-    int buf_len; 
-
-    __HAL_UART_CLEAR_IDLEFLAG(uart_ctx->huart);
-
-    if (uart_ctx->buf.idx == 0) {
-      buf_len = DBL_BUF_TOTAL_LEN - __HAL_DMA_GET_COUNTER(uart_ctx->hdma_rx); 
-    } else {
-      buf_len = DBL_BUF_LEN - __HAL_DMA_GET_COUNTER(uart_ctx->hdma_rx); 
-    }
-
-    // SEGGER_RTT_printf(0, "idle[1]: %d, len=%d\n", uart_ctx->buf.idx, buf_len);
-    HAL_UART_DMAStop(uart_ctx->huart);
-    if (buf_len > 0) {
-      if (buf_len == 1) {
-        uart_ctx->buf.data_rest[0] = uart_ctx->buf.data[uart_ctx->buf.idx][0];
-        uart_ctx->buf.rest_len = 1;
-      } else {
-        // memcpy(uart_ctx->buf.data_rest, uart_ctx->buf.data[uart_ctx->buf.idx], buf_len);
-        HAL_DMA_Start(ctx.memcpy_dma, (uint32_t)uart_ctx->buf.data[uart_ctx->buf.idx], (uint32_t)uart_ctx->buf.data_rest, buf_len);
-        if (HAL_DMA_PollForTransfer(ctx.memcpy_dma, HAL_DMA_FULL_TRANSFER, 2) == HAL_OK) {
-          uart_ctx->buf.rest_len = buf_len;
-        }
-      }
-    }
-
-    // Set index of double buffer to next.
-    uart_ctx->buf.idx = 0;
-    HAL_UART_Receive_DMA(uart_ctx->huart, (uint8_t *)uart_ctx->buf.data[0], DBL_BUF_TOTAL_LEN);
-
-  }
-  /* USER CODE END USART1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USART2 global interrupt.
-  */
-void USART2_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART2_IRQn 0 */
-  // SEGGER_RTT_printf(0, "Uart2 IRQ\n");
-  /* USER CODE END USART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart2);
-  /* USER CODE BEGIN USART2_IRQn 1 */
-  if(__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE)) {
-    uart_ctx_t * const uart_ctx = &ctx.uart2;
-    int buf_len; 
-
-    __HAL_UART_CLEAR_IDLEFLAG(&huart2);
-
-    if (uart_ctx->buf.idx == 0) {
-      buf_len = DBL_BUF_TOTAL_LEN - __HAL_DMA_GET_COUNTER(uart_ctx->hdma_rx); 
-    } else {
-      buf_len = DBL_BUF_LEN - __HAL_DMA_GET_COUNTER(uart_ctx->hdma_rx); 
-    }
-
-    // SEGGER_RTT_printf(0, "idle[2]: %d, len=%d\n", uart_ctx->buf.idx, buf_len);
-    HAL_UART_DMAStop(uart_ctx->huart);
-    if (buf_len > 0) {
-      if (buf_len == 1) {
-        uart_ctx->buf.data_rest[0] = uart_ctx->buf.data[uart_ctx->buf.idx][0];
-        uart_ctx->buf.rest_len = 1;
-      } else {
-        // memcpy(uart_ctx->buf.data_rest, uart_ctx->buf.data[uart_ctx->buf.idx], buf_len);
-        HAL_DMA_Start(ctx.memcpy_dma, (uint32_t)uart_ctx->buf.data[uart_ctx->buf.idx], (uint32_t)uart_ctx->buf.data_rest, buf_len);
-        if (HAL_DMA_PollForTransfer(ctx.memcpy_dma, HAL_DMA_FULL_TRANSFER, 10) == HAL_OK) {
-          uart_ctx->buf.rest_len = buf_len;
-        }
-      }
-    }
-
-    // Set index of double buffer to next.
-    uart_ctx->buf.idx = 0;
-    HAL_UART_Receive_DMA(uart_ctx->huart, (uint8_t *)uart_ctx->buf.data[0], DBL_BUF_TOTAL_LEN);
-  }
-  /* USER CODE END USART2_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

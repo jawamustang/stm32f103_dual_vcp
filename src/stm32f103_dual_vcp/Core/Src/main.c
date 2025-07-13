@@ -18,8 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dma.h"
-#include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
 
@@ -46,12 +44,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern UART_HandleTypeDef huart1;
-extern UART_HandleTypeDef huart2;
-extern DMA_HandleTypeDef hdma_usart1_rx;
-extern DMA_HandleTypeDef hdma_usart1_tx;
-extern DMA_HandleTypeDef hdma_usart2_rx;
-extern DMA_HandleTypeDef hdma_usart2_tx;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -65,7 +57,7 @@ void USB_CDC_RxHandler_2(uint8_t*, uint32_t);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-ctx_t ctx;
+
 /* USER CODE END 0 */
 
 /**
@@ -76,21 +68,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	int i;
-	uart_ctx_t * uart_ctx;
-	memset(&ctx, 0, sizeof(ctx_t));
-	ctx.uart1.name = "UART1";
-	ctx.uart1.huart = &huart1;
-	ctx.uart1.hdma_rx = &hdma_usart1_rx;
-	ctx.uart1.hdma_tx = &hdma_usart1_tx;
-	ctx.uart1.irq_num = USART1_IRQn;
-	ctx.uart2.name = "UART2";
-	ctx.uart2.huart = &huart2;
-	ctx.uart2.hdma_rx = &hdma_usart2_rx;
-	ctx.uart2.hdma_tx = &hdma_usart2_tx;
-	ctx.uart2.irq_num = USART2_IRQn;
-	ctx.memcpy_dma = &hdma_memtomem_dma1_channel1;
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -111,9 +88,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
@@ -128,8 +102,6 @@ int main(void)
   HAL_NVIC_SetPriority(DMA1_Channel6_IRQn   , 1, 1); // UART2 Tx
   HAL_NVIC_SetPriority(DMA1_Channel7_IRQn   , 1, 0); // UART2 Rx
 
-  __HAL_UART_DISABLE(&huart1);
-  __HAL_UART_DISABLE(&huart2);
   /* USER CODE END 2 */
 
   /* Infinite loop */

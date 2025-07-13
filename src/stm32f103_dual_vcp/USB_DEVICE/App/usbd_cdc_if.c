@@ -252,39 +252,16 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length, uint16
   /*******************************************************************************/
     case CDC_SET_LINE_CODING:
     {
-      uart_ctx_t * const uart_ctx = (index < 2) ? &ctx.uart1 : &ctx.uart2;
+
 
       USBD_CDC_LineCodingTypeDef *line_coding = (USBD_CDC_LineCodingTypeDef *)pbuf;
       if (line_coding->bitrate == 0 || line_coding->datatype == 0) {
           break;
       }
 
-      /*
-       * The maping between USBD_CDC_LineCodingTypeDef and line coding structure.
-       *    dwDTERate   -> line_coding->bitrate
-       *    bCharFormat -> line_coding->format
-       *    bParityType -> line_coding->paritytype
-       *    bDataBits   -> line_coding->datatype
-       */      
-      uart_ctx->huart->Init.BaudRate = line_coding->bitrate;
-      uart_ctx->huart->Init.WordLength = (line_coding->datatype == 8) ? UART_WORDLENGTH_8B : UART_WORDLENGTH_9B;
-      uart_ctx->huart->Init.StopBits = (line_coding->format == 0) ? UART_STOPBITS_1 : UART_STOPBITS_2;
-      uart_ctx->huart->Init.Parity = (line_coding->paritytype == 0) ? UART_PARITY_NONE : (line_coding->paritytype == 1) ? UART_PARITY_ODD : UART_PARITY_EVEN;
-      uart_ctx->huart->Init.Mode = UART_MODE_TX_RX;
-      uart_ctx->huart->Init.HwFlowCtl = UART_HWCONTROL_NONE;
-      uart_ctx->huart->Init.OverSampling = UART_OVERSAMPLING_16;
-        
-      __HAL_UART_DISABLE(uart_ctx->huart);
-      if (HAL_UART_Init(uart_ctx->huart) != HAL_OK) {
-        _Error_Handler(__FILE__, __LINE__);
-      }
 
-      __HAL_UART_ENABLE_IT(uart_ctx->huart, UART_IT_IDLE);
-      __HAL_UART_ENABLE(uart_ctx->huart);
-      NVIC_ClearPendingIRQ(uart_ctx->irq_num);
 
-      HAL_UART_DMAStop(uart_ctx->huart);
-      HAL_UART_Receive_DMA(uart_ctx->huart, (uint8_t *)uart_ctx->buf.data[0], DBL_BUF_TOTAL_LEN);
+
 
     }
     break;
@@ -340,12 +317,6 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len, uint16_t index)
 	}
 	memset(UserRxBufferFS, '\0', *Len);
 
-#if defined(LOOPBACK_TEST)
-  CDC_Transmit_FS(Buf, *Len, index);
-#else
-  // SEGGER_RTT_printf(0, "[%s] Tx: %c\n", (index < 2) ? "uart1" : "uart2", Buf[0]);
-  HAL_UART_Transmit_DMA((index < 2) ? ctx.uart1.huart : ctx.uart2.huart, Buf, *Len);
-#endif
   return (USBD_OK);
   /* USER CODE END 6 */
 }

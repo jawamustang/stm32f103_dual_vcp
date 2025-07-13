@@ -76,23 +76,9 @@ typedef struct _hart_dbl_buf_t {
   int idx;
 } uart_dbl_buf_t;
 
-typedef struct _uart_ctx_t {
-  const char *name;
-  UART_HandleTypeDef *huart;
-  IRQn_Type irq_num;
-  DMA_HandleTypeDef *hdma_rx;
-  DMA_HandleTypeDef *hdma_tx;
-  uart_dbl_buf_t buf;
-  int buf_idx;
-} uart_ctx_t;
 
-typedef struct _ctx_t {
-  uart_ctx_t uart1;
-  uart_ctx_t uart2;
-  DMA_HandleTypeDef *memcpy_dma;
-} ctx_t;
 
-extern ctx_t ctx;
+
 
 /* USER CODE END Private defines */
 
