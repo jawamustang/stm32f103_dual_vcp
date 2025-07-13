@@ -5,16 +5,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c \
-../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.c 
+../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c 
 
 OBJS += \
-./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.o \
-./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.o 
+./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.o 
 
 C_DEPS += \
-./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.d \
-./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.d 
+./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -24,7 +21,7 @@ Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/%.o Middlewares/ST/STM32_U
 clean: clean-Middlewares-2f-ST-2f-STM32_USB_Device_Library-2f-Class-2f-CDC-2f-Src
 
 clean-Middlewares-2f-ST-2f-STM32_USB_Device_Library-2f-Class-2f-CDC-2f-Src:
-	-$(RM) ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.cyclo ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.d ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.o ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.su ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.cyclo ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.d ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.o ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc_if_template.su
+	-$(RM) ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.cyclo ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.d ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.o ./Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.su
 
 .PHONY: clean-Middlewares-2f-ST-2f-STM32_USB_Device_Library-2f-Class-2f-CDC-2f-Src
 

@@ -141,28 +141,12 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  for (i = 0; i < 2; i++)
 	  {
-		uart_ctx = (i == 0) ? &ctx.uart1 : &ctx.uart2;
-	    if (uart_ctx->buf_idx != uart_ctx->buf.idx)
-	    {
-	    	int buf_idx = uart_ctx->buf_idx;
-	    	while (CDC_Transmit_FS((uint8_t *)uart_ctx->buf.data[buf_idx], uart_ctx->buf.len[buf_idx], 2 * i) == USBD_BUSY) {
-	        /* Until data out. */
-	    }
-	    uart_ctx->buf_idx = buf_idx ? 0 : 1;
-	    // SEGGER_RTT_printf(0, "mloop: buf=%d\n", buf_idx);
-	  }
-
-	  if (uart_ctx->buf.rest_len > 0)
-	  {
-		  int tx_len = uart_ctx->buf.rest_len;
-	      uart_ctx->buf.rest_len = 0;
-	      uart_ctx->buf_idx = 0;
-	      while (CDC_Transmit_FS((uint8_t *)uart_ctx->buf.data_rest, tx_len, 2 * i) == USBD_BUSY)
+		  while (CDC_Transmit_FS("USB\r\n", 5, 2 * i) == USBD_BUSY)
 	      {
 	      /* Until data out. */
 	      }
-	      // SEGGER_RTT_printf(0, "rest: len=%d\n", tx_len);
-	   }
+		  HAL_Delay(1000);
+
 	  }
   }
   /* USER CODE END 3 */
